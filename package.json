@@ -1,0 +1,26 @@
+{
+  "name": "8_bit_heroes_backend",
+  "version": "1.0.0",
+  "description": "8_bit_heroes_backend",
+  "keywords": [
+    "backend",
+    "node.js",
+    "express"
+  ],
+  "license": "ISC",
+  "author": "BitBros_Dev",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "watch": "node --watch app.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mysql2": "^3.20.0",
+    "nodemailer": "^8.0.4",
+    "slugify": "^1.6.8"
+  }
+}
