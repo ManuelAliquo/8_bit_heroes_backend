@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const checkoutController = require("../controllers/checkoutController");
+const gameController = require("../controllers/gameController");
 
-// checkout
-router.get("/checkout", checkoutController.orderProductindex);
+router.get("/", (req, res) => {
+  res.json({ message: "games router ok" });
+});
 
 module.exports = router;
