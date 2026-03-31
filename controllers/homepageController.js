@@ -80,12 +80,13 @@ const salesIndex = (req, res) => {
 const newsletterStore = (req, res) => {
   const { email } = req.body;
 
-  const sql = `
-  INSERT INTO newsletter (email)
-  VALUES (?)
+  const checkSql = `
+    SELECT * 
+    FROM newsletter
+    WHERE email = ?
   `;
 
-  connection.query(sql, [email], (err, result) => {
+  connection.query(checkSql, [email], (err, result) => {
     if (err) {
       console.log(err);
       return res.status(500).json({
@@ -93,26 +94,48 @@ const newsletterStore = (req, res) => {
         status: false,
       });
     }
+    if (result.length > 0) {
+      const responseData = {
+        message: "Email Already Registered!",
+        status: false,
+      };
+      return res.status(409).json(responseData);
+    }
 
-    const mailOptions = {
-      from: process.env.SMTP_USER,
-      to: email,
-      subject: "Benvenuto nella Newsletter",
-      text: "Benvenuto nella Newsletter di 8 Bit Heroes",
-    };
+    const insertSql = `
+        INSERT INTO newsletter (email)
+        VALUES (?)
+        `;
 
-    trasporter
-      .sendMail(mailOptions)
-      .then((info) => console.log("MAIL INVIATA:", email, info.response))
-      .catch((err) => console.log("ERRORE:", err));
+    connection.query(insertSql, [email], (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          message: "Database query failed",
+          status: false,
+        });
+      }
 
-    console.log(result.insertId);
+      const mailOptions = {
+        from: process.env.SMTP_USER,
+        to: email,
+        subject: "Benvenuto nella Newsletter",
+        text: "Benvenuto nella Newsletter di 8 Bit Heroes",
+      };
 
-    const responseData = {
-      message: "EMail Added Successfully!",
-      status: true,
-    };
-    res.status(200).json(responseData);
+      trasporter
+        .sendMail(mailOptions)
+        .then((info) => console.log("MAIL INVIATA:", email, info.response))
+        .catch((err) => console.log("ERRORE:", err));
+
+      console.log(result.insertId);
+
+      const responseData = {
+        message: "Email Added Successfully!",
+        status: true,
+      };
+      res.status(200).json(responseData);
+    });
   });
 };
 
