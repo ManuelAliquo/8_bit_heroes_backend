@@ -1,9 +1,24 @@
 const connection = require("../db/connection");
 
-//? INDEX
+//? INDEX (3 DISCOUNTED PRODUCTS)
 const index = (req, res) => {
   const sql = `
-  SELECT * FROM 8_bit_heroes.products;
+    SELECT 
+	    products.id,
+        products.cover_image,
+        products.name,
+        products.slug,
+        products.price,
+        products.discount_id,
+        discounts.percentage,
+        discounts.start_date,
+        discounts.end_date
+    FROM products
+    LEFT JOIN discounts
+    ON discount_id = discounts.id
+    WHERE discount_id IS NOT NULL
+    ORDER BY RAND()
+    LIMIT 3
   `;
 
   connection.query(sql, (err, results) => {
