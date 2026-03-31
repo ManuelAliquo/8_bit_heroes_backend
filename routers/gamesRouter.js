@@ -10,6 +10,6 @@ router.get("/", (req, res) => {
 /* HOMEPAGE CONTROLLERS */
 router.get("/products/discounted", homepageController.discountedIndex);
 router.get("/products/sales", homepageController.salesIndex);
-router.post("/newsletter", homepageController.store);
+router.post("/newsletter", homepageController.newsletterStore);
 
 module.exports = router;

@@ -75,9 +75,32 @@ const salesIndex = (req, res) => {
   });
 };
 
-//? STORE
-const store = (req, res) => {
-  res.send("STORE");
+//? STORE (NEWSLETTERS)
+const newsletterStore = (req, res) => {
+  const { email } = req.body;
+
+  const sql = `
+  INSERT INTO newsletter (email)
+  VALUES (?)
+  `;
+
+  connection.query(sql, [email], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Database query failed",
+        status: false,
+      });
+    }
+
+    console.log(result.insertId);
+
+    const responseData = {
+      message: "EMail Added Successfully!",
+      status: true,
+    };
+    res.status(200).json(responseData);
+  });
 };
 
-module.exports = { discountedIndex, salesIndex, store };
+module.exports = { discountedIndex, salesIndex, newsletterStore };
