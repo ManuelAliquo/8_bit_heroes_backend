@@ -1,8 +1,18 @@
 // db connection
 const connection = require("../db/connection");
 
-function index(req, res) {
-  res.json({ message: "checkout router ok" });
+// orderProductindex
+function orderProductindex(req, res) {
+  const orderProductsSQL = `SELECT * FROM products`; // temporaneo
+
+  connection.query(orderProductsSQL, (err, result) => {
+    if (err) return res.status(400);
+
+    res.status(200).json({
+      success: true,
+      result: result,
+    });
+  });
 }
 
-module.exports = { index };
+module.exports = { orderProductindex };
