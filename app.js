@@ -5,6 +5,9 @@ const gamesRouter = require("./routers/gamesRouter");
 const app = express();
 const port = 3000;
 
+const productRoutes = require ("./routers/productRouter")
+app.use("/products", productRoutes)
+
 app.use(express.json());
 
 app.use("/games", gamesRouter);
