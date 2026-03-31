@@ -17,7 +17,7 @@ function orderProductindex(req, res) {
 
     res.status(200).json({
       success: true,
-      result: "products sent",
+      result: result,
     });
   });
 }
@@ -25,38 +25,68 @@ function orderProductindex(req, res) {
 // update dati dell'ordine
 function updateOrderData(req, res) {
   // temporaneo
+  const {
+    name,
+    surname,
+    email,
+    shipping_address,
+    shipping_cap,
+    shipping_city,
+    shipping_country,
+    billing_address,
+    billing_cap,
+    billing_city,
+    billing_country,
+  } = req.body;
+
   const orderUpdateSQL = `
   UPDATE orders
   SET
-    name = "updated-name",
-    surname = "updated-surname",
-    email = "updated-email",
-    shipping_address = "shipping_address",
-    shipping_cap = "00000",
-    shipping_city = "shipping_city",
-    shipping_country = "shipping_country",
-    billing_address = "billing_address",
-    billing_cap = "00000",
-    billing_city = "billing_city",
-    billing_country = "billing_country",
+    name = ?,
+    surname = ?,
+    email = ?,
+    shipping_address = ?,
+    shipping_cap = ?,
+    shipping_city = ?,
+    shipping_country = ?,
+    billing_address = ?,
+    billing_cap = ?,
+    billing_city = ?,
+    billing_country = ?,
     status = "pagato"
   WHERE id = 1;
   `;
 
-  connection.query(orderUpdateSQL, (err, result) => {
-    if (err) {
-      console.log(err.message);
-      return res.status(500).json({
-        success: false,
-        result: "query failed",
-      });
-    }
+  connection.query(
+    orderUpdateSQL,
+    [
+      name,
+      surname,
+      email,
+      shipping_address,
+      shipping_cap,
+      shipping_city,
+      shipping_country,
+      billing_address,
+      billing_cap,
+      billing_city,
+      billing_country,
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(err.message);
+        return res.status(500).json({
+          success: false,
+          result: "query failed",
+        });
+      }
 
-    res.status(200).json({
-      success: true,
-      result: "row updated",
-    });
-  });
+      res.status(200).json({
+        success: true,
+        result: "order updated",
+      });
+    },
+  );
 }
 
 module.exports = { orderProductindex, updateOrderData };
