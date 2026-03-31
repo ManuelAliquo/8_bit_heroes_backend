@@ -1,31 +1,31 @@
-1. ## Homepage:
+1. ## Homepage: [MATTIA]
 
 - visualizzazione di almeno due sezioni di prodotti (3 prodotti in promozione e 3 più acquistati)
 
 > ### Routes = INDEX (Homepage) | STORE (NewsLetters)
 
-2. ## Pagina di ricerca
+2. ## Pagina di ricerca [EDOARDO]
 
 - barra di ricerca con opzioni di ordinamento (prezzo, nome, recenti)
 - visualizzazione dei risultati di ricerca
 
 > ### Routes = INDEX
 
-3. ## Pagina di dettaglio prodotto
+3. ## Pagina di dettaglio prodotto [LEONARDO]
 
 - visualizzazione delle informazioni del prodotto
 - possibilità di aggiungere il prodotto al carrello
 
 > ### Routes = SHOW
 
-4. ## Carrello
+4. ## Carrello [MICHELE]
 
 - possibilità di modificare le quantità dei prodotti nel carrello
 - visualizzare il totale del carrello
 
 > ### Routes = INDEX (Mostra videogiochi da acquistati) | STORE (Inserimento ordine con stato `Da Pagare`)
 
-5. ## Checkout
+5. ## Checkout [MANUEL]
 
 - inserimento dei dati di fatturazione e spedizione del cliente
 - riepilogo dell’ordine con il totale
