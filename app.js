@@ -1,13 +1,16 @@
 const express = require("express");
 const connection = require("./db/connection");
 const gamesRouter = require("./routers/gamesRouter");
+const checkoutRouter = require("./routers/checkoutRouter");
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 
-app.use("/games", gamesRouter);
+app.use("/", gamesRouter);
+
+app.use("/", checkoutRouter);
 
 app.get("/", (req, res) => {
   res.send("Server attivo");
