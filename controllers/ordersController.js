@@ -107,7 +107,12 @@ function store(req, res) {
         INSERT INTO products_orders (order_id, product_id, quantity, product_price, digital_copy_code) 
         VALUES (?,?,?,?,?)`;
 
-        connection.query(orderedGames, [orderId, orderedProduct.id, orderedProduct.quantity, orderedProduct.price])
+        connection.query(orderedGames, [orderId, orderedProduct.id, orderedProduct.quantity, orderedProduct.price, digitalCopyCodeGenerator()], (err, orderedProductsList) => {
+            res.json({
+                success: true,
+                message: 'Ordine inviato con successo'
+            })
+        })
     })
 
 }
@@ -116,6 +121,22 @@ function errors(err) {
     return res.status(500).json({ success: false, message: 'Errore interno del database operazione fallita' });
 };
 
+// Genera il codice o token per la copia digitale del gioco
+function digitalCopyCodeGenerator(maxChar = 15) {
+    // Stringa dei caratteri validi
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
+    // Genera un array lungo tanto quanto il valore numerico inserito tra le parentesi
+    const randomNums = new Uint8Array(maxChar);
+
+    // riempe l'array con numeri random compresi tra 0 e 255
+    crypto.getRandomValues(randomNums);
+
+    // sfruttando l'array randomNums crea un nuovo array che conterra il codice per la copia digitale.
+    // per selezionare il carattere da inserire fa un calcolo con il resto di num % characters.length che fa in modo di non avere mai un id che non esiste nella stringa dei caratteri validi.
+    const digitalCopyCode = Array.from(randomNums, num => characters[num % characters.length]).join('');
+
+    return digitalCopyCode
+}
 
 module.exports = { index, show, store }
