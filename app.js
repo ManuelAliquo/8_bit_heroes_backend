@@ -2,6 +2,7 @@ const express = require("express");
 const connection = require("./db/connection");
 const gamesRouter = require("./routers/gamesRouter");
 const checkoutRouter = require("./routers/checkoutRouter");
+const ordersRouter = require('./routers/ordersRouter');
 
 const app = express();
 const port = 3000;
@@ -31,6 +32,8 @@ app.get("/test-db", (req, res) => {
     });
   });
 });
+
+app.use('/orders', ordersRouter);
 
 app.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);
