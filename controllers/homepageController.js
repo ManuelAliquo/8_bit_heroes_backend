@@ -1,4 +1,5 @@
 const connection = require("../db/connection");
+const trasporter = require("../mailer/transporter");
 
 //? INDEX (3 DISCOUNTED PRODUCTS)
 const discountedIndex = (req, res) => {
@@ -92,6 +93,18 @@ const newsletterStore = (req, res) => {
         status: false,
       });
     }
+
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: "Benvenuto nella Newsletter",
+      text: "Benvenuto nella Newsletter di 8 Bit Heroes",
+    };
+
+    trasporter
+      .sendMail(mailOptions)
+      .then((info) => console.log("MAIL INVIATA:", email, info.response))
+      .catch((err) => console.log("ERRORE:", err));
 
     console.log(result.insertId);
 
