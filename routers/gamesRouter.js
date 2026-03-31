@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
 });
 
 /* HOMEPAGE CONTROLLERS */
-router.get("/", homepageController.index);
-router.post("/", homepageController.store);
+router.get("/products", homepageController.index);
+router.post("/newsletter", homepageController.store);
 
 module.exports = router;
