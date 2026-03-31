@@ -11,11 +11,11 @@
   "author": "BitBros_Dev",
   "type": "commonjs",
   "main": "app.js",
-"scripts": {
-  "test": "echo \"Error: no test specified\" && exit 1",
-  "start": "node --env-file=.env app.js",
-  "watch": "node --watch --env-file=.env app.js"
-},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --env-file=.env app.js",
+    "watch": "node --watch --env-file=.env app.js"
+  },
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",

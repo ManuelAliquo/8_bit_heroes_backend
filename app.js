@@ -7,7 +7,7 @@ const port = 3000;
 
 app.use(express.json());
 
-app.use("/games", gamesRouter);
+app.use("/", gamesRouter);
 
 app.get("/", (req, res) => {
   res.send("Server attivo");
