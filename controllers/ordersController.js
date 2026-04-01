@@ -30,7 +30,7 @@ function show(req, res) {
 
         connection.query(orderedProductsSql, [orderId], (err, orderedProducts) => {
             if (err) return errors(err);
-            return res.status(200).json({
+             res.status(200).json({
                 success: true,
                 order: results,
                 productsOrdered: orderedProducts
