@@ -24,17 +24,17 @@ const discountedIndex = (req, res) => {
 
   connection.query(sql, (err, results) => {
     if (err) {
-      console.log(err);
+      console.log(err.message);
       return res.status(500).json({
-        message: "Database query failed",
-        status: false,
+        success: false,
+        result: "Database query failed",
       });
     }
 
     const responseData = {
+      success: true,
       result: results,
       messsage: "Discounted Products List:",
-      status: true,
     };
 
     res.json(responseData);
@@ -59,7 +59,7 @@ const salesIndex = (req, res) => {
 
   connection.query(sql, (err, results) => {
     if (err) {
-      console.log(err);
+      console.log(err.message);
       return res.status(500).json({
         message: "Database query failed",
         status: false,
@@ -67,9 +67,9 @@ const salesIndex = (req, res) => {
     }
 
     const responseData = {
+      success: true,
       result: results,
       messsage: "Sales Products List:",
-      status: true,
     };
 
     res.json(responseData);
@@ -88,16 +88,16 @@ const newsletterStore = (req, res) => {
 
   connection.query(checkSql, [email], (err, result) => {
     if (err) {
-      console.log(err);
+      console.log(err.message);
       return res.status(500).json({
-        message: "Database query failed",
-        status: false,
+        success: false,
+        result: "Database query failed",
       });
     }
     if (result.length > 0) {
       const responseData = {
-        message: "Email Already Registered!",
-        status: false,
+        success: false,
+        result: "Email Already Registered!",
       };
       return res.status(409).json(responseData);
     }
@@ -109,10 +109,10 @@ const newsletterStore = (req, res) => {
 
     connection.query(insertSql, [email], (err, result) => {
       if (err) {
-        console.log(err);
+        console.log(err.message);
         return res.status(500).json({
-          message: "Database query failed",
-          status: false,
+          success: false,
+          result: "Database query failed",
         });
       }
 
@@ -131,8 +131,8 @@ const newsletterStore = (req, res) => {
       console.log(result.insertId);
 
       const responseData = {
-        message: "Email Added Successfully!",
-        status: true,
+        success: true,
+        result: "Email Added Successfully!",
       };
       res.status(200).json(responseData);
     });

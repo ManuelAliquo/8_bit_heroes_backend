@@ -26,12 +26,11 @@ function sortedIndex(req, res) {
   const field = req.query.field;
 
   const allowedFields = ["price", "name", "created_at"];
-  if (!field || !allowedFields.includes(field)) {
+  if (!field || !allowedFields.includes(field))
     return res.status(400).json({
       success: false,
       result: "Invalid or missing field",
     });
-  }
 
   const sortSQL = `
   SELECT * FROM products
