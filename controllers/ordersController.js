@@ -1,4 +1,5 @@
 const connection = require('../db/connection');
+const crypto = require('crypto');
 
 function index(req, res) { };
 
@@ -10,7 +11,7 @@ function show(req, res) {
     WHERE id = ?`;
 
     connection.query(sql, [id], (err, results) => {
-        if (err) return errors(err);
+        if (err) return errors(err,res);
 
         const orderedProductsSql =
             `SELECT * FROM orders_products  
@@ -32,92 +33,49 @@ function show(req, res) {
 function store(req, res) {
     // dati che vengono recuperati dal body della richiesta
     const {
-        name,
-        surname,
-        email,
-        shipping_address,
-        shipping_cap,
-        shipping_city,
-        shipping_country,
-        billing_address,
-        billing_cap,
-        billing_city,
-        billing_country,
-        sameAddress,
-        orderedProducts //é un array di oggetti che contiene tutti i prodotti che erano nel carrello
+        orderedProducts, //é un array di oggetti che contiene tutti i prodotti che erano nel carrello
     } = req.body;
+
+    let total_price = 0;
+
+    orderedProducts.map(prod =>  total_price = total_price + prod.price * parseInt(prod.quantity));
 
     // variabile per salvare l'id dell'ordine creato. servirà dopo per associare i prodotti nel carrello all'ordine.
     let orderId;
 
     const sql = `
-    INSERT INTO orders (name,
-        surname,
-        email,
-        shipping_address,
-        shipping_cap,
-        shipping_city,
-        shipping_country,
-        billing_address,
-        billing_cap,
-        billing_city,
-        billing_country)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?)
+    INSERT INTO orders (status, total_price)
+        VALUES (?, ?)
     `;
 
-    const orderData = (sameAddress) => {
-        return sameAddress ? [
-            name,
-            surname,
-            email,
-            shipping_address,
-            shipping_cap,
-            shipping_city,
-            shipping_country,
-            shipping_address,
-            shipping_cap,
-            shipping_city,
-            shipping_country
-        ] : [
-            name,
-            surname,
-            email,
-            shipping_address,
-            shipping_cap,
-            shipping_city,
-            shipping_country,
-            billing_address,
-            billing_cap,
-            billing_city,
-            billing_country
-        ]
-    }
-
-    connection.query(sql,
-        orderData(sameAddress), (err, results) => {
-            if (err) return errors(err);
+    
+    connection.query(sql,['Da pagare', total_price.toFixed(2)], (err, results) => {
+            if (err) return errors(err,res);
             // ritorno l'id dell'ordine creato salvandolo direttamente nella variabile orderId appositamente creata.
-            return orderId = results.insertedId
+            orderId = results.insertId;
+
+            // mappo gli orderedproducts così da salvarli nella apposita sezione del database
+            orderedProducts.map((p) => {
+                const orderedGames = `
+                INSERT INTO products_orders (order_id, product_id, quantity, product_price, digital_copy_code) 
+                VALUES (?,?,?,?,?)`;
+        
+                connection.query(orderedGames, [orderId, p.id, p.quantity, p.price, p.copyInDigital?digitalCopyCodeGenerator(): ""], (err, orderedProductsList) => {
+                });
+            })
+            res.json({
+                success: true,
+                message: 'Ordine inviato con successo',
+                orderCode: orderId
+            })
         });
 
 
-    // mappo gli orderedproducts così da salvarli nella apposita sezione del database
-    orderedProducts.map((orderedProduct) => {
-        const orderedGames = `
-        INSERT INTO products_orders (order_id, product_id, quantity, product_price, digital_copy_code) 
-        VALUES (?,?,?,?,?)`;
-
-        connection.query(orderedGames, [orderId, orderedProduct.id, orderedProduct.quantity, orderedProduct.price, digitalCopyCodeGenerator()], (err, orderedProductsList) => {
-            res.json({
-                success: true,
-                message: 'Ordine inviato con successo'
-            })
-        })
-    })
-
+    
 }
 
-function errors(err) {
+function errors(err,res) {
+    console.log(err.message);
     return res.status(500).json({ success: false, message: 'Errore interno del database operazione fallita' });
 };
 
@@ -126,15 +84,12 @@ function digitalCopyCodeGenerator(maxChar = 15) {
     // Stringa dei caratteri validi
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-    // Genera un array lungo tanto quanto il valore numerico inserito tra le parentesi
-    const randomNums = new Uint8Array(maxChar);
+    // Genera un buffer di bytes casuali
+    const randomBytes = crypto.randomBytes(maxChar);
 
-    // riempe l'array con numeri random compresi tra 0 e 255
-    crypto.getRandomValues(randomNums);
-
-    // sfruttando l'array randomNums crea un nuovo array che conterra il codice per la copia digitale.
+    // sfruttando randomBytes crea un array che conterra il codice per la copia digitale.
     // per selezionare il carattere da inserire fa un calcolo con il resto di num % characters.length che fa in modo di non avere mai un id che non esiste nella stringa dei caratteri validi.
-    const digitalCopyCode = Array.from(randomNums, num => characters[num % characters.length]).join('');
+    const digitalCopyCode = Array.from(randomBytes, num => characters[num % characters.length]).join('');
 
     return digitalCopyCode
 }
