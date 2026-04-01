@@ -2,11 +2,11 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
-// routers
-const gamesRouter = require("./routers/gamesRouter");
-
 // middlewares
 app.use(express.json());
+
+// routers
+const gamesRouter = require("./routers/gamesRouter");
 
 app.use("/", gamesRouter);
 
