@@ -16,8 +16,8 @@ router.post("/newsletter", homepageController.newsletterStore);
 router.get("/products", sortingController.unsortedIndex);
 router.get("/products/sort", sortingController.sortedIndex);
 
-/* PRODUCT DETAIL CONTROLLER */
-router.get("/product/:id", productController.show);
+/* PRODUCT DETAIL */
+router.get("/products/:slug", productController.show);
 
 /* CHECKOUT CONTROLLER */
 router.get("/checkout", checkoutController.orderProductindex);
