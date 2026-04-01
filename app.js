@@ -1,23 +1,18 @@
 const express = require("express");
-<<<<<<< HEAD
+
 const connection = require("./db/connection");
 const gamesRouter = require("./routers/gamesRouter");
 const checkoutRouter = require("./routers/checkoutRouter");
 const ordersRouter = require('./routers/ordersRouter');
-
-=======
-const cors = require("cors");
->>>>>>> main
 const app = express();
 const port = 3000;
+const cors = require("cors");
 
 // middlewares
 app.use(cors());
 
 app.use(express.json());
 
-// routers
-const gamesRouter = require("./routers/gamesRouter");
 
 app.use("/", gamesRouter);
 
