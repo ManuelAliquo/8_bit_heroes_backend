@@ -1,25 +1,34 @@
 const connection = require('../db/connection');
 const crypto = require('crypto');
 
-function index(req, res) { };
+function index(req, res) {
+    const sql = `SELECT * FROM orders`;
+    connection.query(sql, (err, results) => {
+        res.status(200).json({
+            success: true,
+            result: results
+        })
+    })
+};
 
 function show(req, res) {
     const { id } = req.params;
+    const orderId = parseInt(id);
     const sql = `
     SELECT * 
     FROM orders 
     WHERE id = ?`;
 
-    connection.query(sql, [id], (err, results) => {
-        if (err) return errors(err,res);
+    connection.query(sql, [orderId], (err, results) => {
+        if (err) return errors(err, res);
 
         const orderedProductsSql =
-            `SELECT * FROM orders_products  
+            `SELECT * FROM products_orders 
         INNER JOIN products 
-        ON orders_products.product_id = products.id
+        ON products_orders.product_id = products.id
         WHERE order_id = ?`
 
-        connection.query(orderedProductsSql, [id], (err, orderedProducts) => {
+        connection.query(orderedProductsSql, [orderId], (err, orderedProducts) => {
             if (err) return errors(err);
             return res.status(200).json({
                 success: true,
@@ -38,7 +47,7 @@ function store(req, res) {
 
     let total_price = 0;
 
-    orderedProducts.map(prod =>  total_price = total_price + prod.price * parseInt(prod.quantity));
+    orderedProducts.map(prod => total_price = total_price + prod.price * parseInt(prod.quantity));
 
     // variabile per salvare l'id dell'ordine creato. servirà dopo per associare i prodotti nel carrello all'ordine.
     let orderId;
@@ -48,33 +57,33 @@ function store(req, res) {
         VALUES (?, ?)
     `;
 
-    
-    connection.query(sql,['Da pagare', total_price.toFixed(2)], (err, results) => {
-            if (err) return errors(err,res);
-            // ritorno l'id dell'ordine creato salvandolo direttamente nella variabile orderId appositamente creata.
-            orderId = results.insertId;
 
-            // mappo gli orderedproducts così da salvarli nella apposita sezione del database
-            orderedProducts.map((p) => {
-                const orderedGames = `
+    connection.query(sql, ['Da pagare', total_price.toFixed(2)], (err, results) => {
+        if (err) return errors(err, res);
+        // ritorno l'id dell'ordine creato salvandolo direttamente nella variabile orderId appositamente creata.
+        orderId = results.insertId;
+
+        // mappo gli orderedproducts così da salvarli nella apposita sezione del database
+        orderedProducts.map((p) => {
+            const orderedGames = `
                 INSERT INTO products_orders (order_id, product_id, quantity, product_price, digital_copy_code) 
                 VALUES (?,?,?,?,?)`;
-        
-                connection.query(orderedGames, [orderId, p.id, p.quantity, p.price, p.copyInDigital?digitalCopyCodeGenerator(): ""], (err, orderedProductsList) => {
-                });
-            })
-            res.json({
-                success: true,
-                message: 'Ordine inviato con successo',
-                orderCode: orderId
-            })
-        });
+
+            connection.query(orderedGames, [orderId, p.id, p.quantity, p.price, p.copyInDigital ? digitalCopyCodeGenerator() : ""], (err, orderedProductsList) => {
+            });
+        })
+        res.json({
+            success: true,
+            message: 'Ordine inviato con successo',
+            orderCode: orderId
+        })
+    });
 
 
-    
+
 }
 
-function errors(err,res) {
+function errors(err, res) {
     console.log(err.message);
     return res.status(500).json({ success: false, message: 'Errore interno del database operazione fallita' });
 };
