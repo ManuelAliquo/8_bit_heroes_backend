@@ -1,7 +1,7 @@
 const connection = require("../db/connection");
 
 function show(req, res) {
-  const { id } = req.params;
+  const { slug } = req.params;
 
   const productSql = `SELECT 
       p.*,
@@ -10,9 +10,9 @@ function show(req, res) {
       d.end_date AS discount_end_date
     FROM products p
     LEFT JOIN discounts d ON p.discount_id = d.id
-    WHERE p.id = ?`;
+    WHERE p.slug = ?`;
 
-  connection.query(productSql, [id], (err, results) => {
+  connection.query(productSql, [slug], (err, results) => {
     if (err) {
       return res.status(500).json({
         error: "Errore del Server",
@@ -32,26 +32,45 @@ function show(req, res) {
       JOIN product_tags pt ON t.id = pt.tag_id
       WHERE pt.product_id = ?`;
 
-    connection.query(tagsSql, [id], (err, tagResults) => {
+    connection.query(tagsSql, [product.id], (err, tagResults) => {
       if (err) {
         return res.status(500).json({
           error: "Errore nel recupero tag",
         });
       }
 
-      product.tags = tagResults;
+      product.tags = tagResults
 
-      if (product.discount_percentage) {
+       const today = new Date()
+       today.setHours(0, 0, 0, 0)
+
+        const start = product.discount_start_date
+        ? new Date(product.discount_start_date)
+        : null
+        if (start) start.setHours(0, 0, 0, 0)
+
+        const end = product.discount_end_date
+        ? new Date(product.discount_end_date)
+        : null
+        if (end) end.setHours(0, 0, 0, 0)
+
+        if (product.discount_percentage && 
+        start &&
+        end &&
+        today >= start &&
+        today <= end
+
+      ) {
         product.final_price = (
           product.price -
           (product.price * product.discount_percentage) / 100
         ).toFixed(2);
       } else {
-        product.final_price = product.price;
+        product.final_price = product.price
       }
-      res.json(product);
-    });
-  });
+      res.json(product)
+    })
+  })
 }
 
 module.exports = { show };
