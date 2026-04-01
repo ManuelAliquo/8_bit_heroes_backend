@@ -11,7 +11,9 @@ router.get("/products/discounted", homepageController.discountedIndex);
 router.get("/products/sales", homepageController.salesIndex);
 router.post("/newsletter", homepageController.newsletterStore);
 
-router.get("/product/:id", productController.show);
+
+/* PRODUCT DETAIL */
+router.get("/products/:slug", productController.show);
 
 /* CHECKOUT CONTROLLERS */
 router.get("/checkout", checkoutController.orderProductindex);
