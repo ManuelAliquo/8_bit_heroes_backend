@@ -19,7 +19,7 @@ const discountedIndex = (req, res) => {
     ON discount_id = discounts.id
     WHERE discount_id IS NOT NULL
     ORDER BY RAND()
-    LIMIT 3
+    LIMIT 4
   `;
 
   connection.query(sql, (err, results) => {
@@ -54,7 +54,7 @@ const salesIndex = (req, res) => {
     FROM products
     WHERE sold_copies IS NOT NULL
     ORDER BY RAND()
-    LIMIT 3
+    LIMIT 4
   `;
 
   connection.query(sql, (err, results) => {
