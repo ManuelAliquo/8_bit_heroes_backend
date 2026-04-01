@@ -14,16 +14,18 @@ function show(req, res) {
 
   connection.query(productSql, [slug], (err, results) => {
     if (err) {
+      console.log(err.message);
       return res.status(500).json({
-        error: "Errore del Server",
+        success: false,
+        result: "Errore del Server",
       });
     }
 
-    if (results.length === 0) {
+    if (results.length === 0)
       return res.status(404).json({
-        error: "Prodotto non trovato",
+        success: false,
+        result: "Prodotto non trovato",
       });
-    }
 
     const product = results[0];
 
@@ -34,43 +36,34 @@ function show(req, res) {
 
     connection.query(tagsSql, [product.id], (err, tagResults) => {
       if (err) {
+        console.log(err.message);
         return res.status(500).json({
-          error: "Errore nel recupero tag",
+          success: false,
+          result: "Errore nel recupero del tag",
         });
       }
 
-      product.tags = tagResults
+      product.tags = tagResults;
 
-       const today = new Date()
-       today.setHours(0, 0, 0, 0)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-        const start = product.discount_start_date
-        ? new Date(product.discount_start_date)
-        : null
-        if (start) start.setHours(0, 0, 0, 0)
+      const start = product.discount_start_date ? new Date(product.discount_start_date) : null;
+      if (start) start.setHours(0, 0, 0, 0);
 
-        const end = product.discount_end_date
-        ? new Date(product.discount_end_date)
-        : null
-        if (end) end.setHours(0, 0, 0, 0)
+      const end = product.discount_end_date ? new Date(product.discount_end_date) : null;
+      if (end) end.setHours(0, 0, 0, 0);
 
-        if (product.discount_percentage && 
-        start &&
-        end &&
-        today >= start &&
-        today <= end
-
-      ) {
+      if (product.discount_percentage && start && end && today >= start && today <= end)
         product.final_price = (
           product.price -
           (product.price * product.discount_percentage) / 100
         ).toFixed(2);
-      } else {
-        product.final_price = product.price
-      }
-      res.json(product)
-    })
-  })
+      else product.final_price = product.price;
+
+      res.json(product);
+    });
+  });
 }
 
 module.exports = { show };
