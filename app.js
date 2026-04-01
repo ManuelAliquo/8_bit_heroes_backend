@@ -7,7 +7,13 @@ const ordersRouter = require('./routers/ordersRouter');
 const app = express();
 const port = 3000;
 
+// middlewares
+app.use(cors());
+
 app.use(express.json());
+
+// routers
+const gamesRouter = require("./routers/gamesRouter");
 
 app.use("/", gamesRouter);
 
