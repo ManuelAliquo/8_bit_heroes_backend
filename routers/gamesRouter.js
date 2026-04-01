@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const homepageController = require("../controllers/homepageController");
-const gameController = require("../controllers/gameController");
 const sortingController = require("../controllers/sortingController");
 const productController = require("../controllers/productController");
 const checkoutController = require("../controllers/checkoutController");
