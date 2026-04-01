@@ -24,7 +24,8 @@ function orderProductindex(req, res) {
 
 // update dati dell'ordine
 function updateOrderData(req, res) {
-  // temporaneo
+  const { id } = req.params;
+
   const {
     name,
     surname,
@@ -54,7 +55,7 @@ function updateOrderData(req, res) {
     billing_city = ?,
     billing_country = ?,
     status = "pagato"
-  WHERE id = 1;
+  WHERE id = ?;
   `;
 
   connection.query(
@@ -71,6 +72,7 @@ function updateOrderData(req, res) {
       billing_cap,
       billing_city,
       billing_country,
+      id,
     ],
     (err, result) => {
       if (err) {
