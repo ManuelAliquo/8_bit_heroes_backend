@@ -1,12 +1,12 @@
-
-function validId (req, res, next) {
-    const {id} = req.params;
-    if (isNaN(parseInt(id))) return res.status(400).json({
-        success: false,
-        message: "questo order id non è valido."
+function validId(req, res, next) {
+  const { id } = req.params;
+  if (isNaN(parseInt(id)))
+    return res.status(400).json({
+      success: false,
+      result: "questo order id non è valido.",
     });
 
-    next();
+  next();
 }
 
-module.exports = {validId}
+module.exports = { validId };

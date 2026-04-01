@@ -61,8 +61,8 @@ const salesIndex = (req, res) => {
     if (err) {
       console.log(err.message);
       return res.status(500).json({
-        message: "Database query failed",
-        status: false,
+        success: false,
+        result: "Database query failed",
       });
     }
 
