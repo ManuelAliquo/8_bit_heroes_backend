@@ -1,16 +1,19 @@
 const express = require("express");
 const router = express.Router();
-
-// controller imports
 const homepageController = require("../controllers/homepageController");
 const sortingController = require("../controllers/sortingController");
 const productController = require("../controllers/productController");
 const checkoutController = require("../controllers/checkoutController");
 
+router.get("/", (req, res) => {
+  res.json({ message: "games router ok" });
+});
+
 /* HOMEPAGE CONTROLLER */
 router.get("/products/discounted", homepageController.discountedIndex);
 router.get("/products/sales", homepageController.salesIndex);
 router.post("/newsletter", homepageController.newsletterStore);
+
 
 /* SORTING CONTROLLER */
 router.get("/products", sortingController.unsortedIndex);
