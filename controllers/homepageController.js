@@ -1,7 +1,7 @@
 const connection = require("../db/connection");
 const trasporter = require("../mailer/transporter");
 
-//? INDEX (3 DISCOUNTED PRODUCTS)
+//? INDEX (4 DISCOUNTED PRODUCTS)
 const discountedIndex = (req, res) => {
   const sql = `
     SELECT 
@@ -41,7 +41,7 @@ const discountedIndex = (req, res) => {
   });
 };
 
-//? INDEX (3 TOP SALES PRODUCTS)
+//? INDEX (4 TOP SALES PRODUCTS)
 const salesIndex = (req, res) => {
   const sql = `
     SELECT
