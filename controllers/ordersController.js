@@ -1,5 +1,5 @@
-const connection = require('../db/connection');
-const crypto = require('crypto');
+const connection = require("../db/connection");
+const crypto = require("crypto");
 
 function index(req, res) {
   const sql = `SELECT * FROM orders`;
@@ -26,7 +26,7 @@ function show(req, res) {
       `SELECT * FROM products_orders 
         INNER JOIN products 
         ON products_orders.product_id = products.id
-        WHERE order_id = ?`
+        WHERE order_id = ?`;
 
     connection.query(orderedProductsSql, [orderId], (err, orderedProducts) => {
       if (err) return errors(err);
@@ -138,4 +138,4 @@ function digitalCopyCodeGenerator(maxChar = 15) {
   return digitalCopyCode
 }
 
-module.exports = { index, show, store }
+module.exports = { index, show, store };
