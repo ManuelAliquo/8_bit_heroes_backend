@@ -58,7 +58,7 @@ function store(req, res) {
 
   let total_price = 0;
 
-  orderedProducts.map(prod => total_price = total_price + prod.price * parseInt(prod.quantity));
+  orderedProducts.map(prod => total_price = total_price + prod.final_price * parseInt(prod.quantity));
 
   // variabile per salvare l'id dell'ordine creato. servirà dopo per associare i prodotti nel carrello all'ordine.
   let orderId;
