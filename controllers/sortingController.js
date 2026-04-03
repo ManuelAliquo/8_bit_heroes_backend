@@ -1,8 +1,26 @@
 const connection = require("../db/connection");
 
 // INDEX
-function unsortedIndex(req, res) {
-  const indexSQL = `SELECT * FROM products;`;
+function index(req, res) {
+  const order = req.query.order === "desc" ? "DESC" : "ASC";
+  const field = req.query.field;
+  
+  const baseSQL = `SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
+   FROM products
+   LEFT JOIN discounts ON products.discount_id = discounts.id`;
+
+  const allowedFields = ["price", "name", "created_at"];
+  if (field && !allowedFields.includes(field))
+    return res.status(400).json({
+      success: false,
+      result: "Invalid or missing field",
+    });
+
+    let indexSQL = baseSQL;
+
+
+
+   if(field){indexSQL += ` ORDER BY ${field} ${order}`}
 
   connection.query(indexSQL, (err, result) => {
     if (err) {
@@ -20,37 +38,4 @@ function unsortedIndex(req, res) {
   });
 }
 
-// SORTED
-function sortedIndex(req, res) {
-  const order = req.query.order === "desc" ? "DESC" : "ASC";
-  const field = req.query.field;
-
-  const allowedFields = ["price", "name", "created_at"];
-  if (!field || !allowedFields.includes(field))
-    return res.status(400).json({
-      success: false,
-      result: "Invalid or missing field",
-    });
-
-  const sortSQL = `
-  SELECT * FROM products
-  ORDER BY ${field} ${order};
-  `;
-
-  connection.query(sortSQL, (err, result) => {
-    if (err) {
-      console.log(err.message);
-      return res.status(500).json({
-        success: false,
-        result: "query failed",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      result: result,
-    });
-  });
-}
-
-module.exports = { unsortedIndex, sortedIndex };
+module.exports = { index };

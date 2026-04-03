@@ -13,8 +13,7 @@ router.get("/products/sales", homepageController.salesIndex);
 router.post("/newsletter", homepageController.newsletterStore);
 
 /* SORTING CONTROLLER */
-router.get("/products", sortingController.unsortedIndex);
-router.get("/products/sort", sortingController.sortedIndex);
+router.get("/products", sortingController.index);
 
 /* PRODUCT DETAIL CONTROLLER */
 router.get("/products/:slug", productController.show);
