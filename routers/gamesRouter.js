@@ -26,6 +26,6 @@ router.post("/orders", ordersController.store);
 
 /* CHECKOUT CONTROLLER */
 router.get("/checkout", checkoutController.orderProductindex);
-router.patch("/checkout/order-update/:id", checkoutController.updateOrderData);
+// router.patch("/checkout/order-update/:id", checkoutController.updateOrderData);
 
 module.exports = router;
