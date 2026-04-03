@@ -50,8 +50,13 @@ const salesIndex = (req, res) => {
         products.name,
         products.slug,
         products.price,
-        products.sold_copies
+        products.sold_copies,
+        discounts.percentage,
+        discounts.start_date,
+        discounts.end_date
     FROM products
+    LEFT JOIN discounts
+    ON products.discount_id = discounts.id
     WHERE sold_copies IS NOT NULL
     ORDER BY RAND()
     LIMIT 4
