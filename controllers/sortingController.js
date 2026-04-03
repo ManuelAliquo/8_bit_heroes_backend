@@ -4,7 +4,7 @@ const connection = require("../db/connection");
 function index(req, res) {
   const order = req.query.order === "desc" ? "DESC" : "ASC";
   const field = req.query.field;
-  
+
   const baseSQL = `SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
    FROM products
    LEFT JOIN discounts ON products.discount_id = discounts.id`;
@@ -16,11 +16,11 @@ function index(req, res) {
       result: "Invalid or missing field",
     });
 
-    let indexSQL = baseSQL;
+  let indexSQL = baseSQL;
 
-
-
-   if(field){indexSQL += ` ORDER BY ${field} ${order}`}
+  if (field) {
+    indexSQL += ` ORDER BY ${field} ${order}`;
+  }
 
   connection.query(indexSQL, (err, result) => {
     if (err) {
@@ -36,6 +36,60 @@ function index(req, res) {
       result: result,
     });
   });
+}
+
+// SEARCH QUERY PARAMS
+function index(req, res) {
+  const searchWord = req.query.search;
+  const formattedSearchWord = `%${searchWord}%`;
+
+  const baseSQL = `
+  SELECT 
+	cover_image,
+    name,
+    slug,
+    description,
+    price,
+    discounts.percentage,
+    discounts.start_date,
+    discounts.end_date
+  FROM products
+
+  LEFT JOIN discounts
+  ON discount_id = discounts.id
+
+  INNER JOIN product_tags
+  ON products.id = product_tags.product_id
+
+  INNER JOIN tags
+  ON product_tags.tag_id = tags.id
+
+  WHERE name LIKE ? OR tags.tag_name LIKE ?
+
+  GROUP BY product_id
+  `;
+
+  connection.query(
+    baseSQL,
+    [formattedSearchWord, formattedSearchWord],
+    (err, result) => {
+      if (err) {
+        console.log(err.message);
+        return res.status(500).json({
+          success: false,
+          result: "query failed",
+        });
+      }
+
+      const resultData = {
+        result: result,
+        message: `Risultati di ricerca con parola: ${searchWord}`,
+        success: true,
+      };
+
+      res.json(resultData);
+    },
+  );
 }
 
 module.exports = { index };
