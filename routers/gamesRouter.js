@@ -14,7 +14,7 @@ router.post("/newsletter", homepageController.newsletterStore);
 
 /* SORTING CONTROLLER */
 router.get("/products", sortingController.index);
-router.get("/products", sortingController.searchQueryParam);
+router.get("/products/find", sortingController.searchQueryParam);
 
 /* PRODUCT DETAIL CONTROLLER */
 router.get("/products/:slug", productController.show);

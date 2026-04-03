@@ -45,7 +45,8 @@ function searchQueryParam(req, res) {
 
   const baseSQL = `
   SELECT 
-	cover_image,
+    products.id,
+	  cover_image,
     name,
     slug,
     description,
@@ -66,7 +67,7 @@ function searchQueryParam(req, res) {
 
   WHERE name LIKE ? OR tags.tag_name LIKE ?
 
-  GROUP BY product_id
+  GROUP BY products.id
   `;
 
   connection.query(
@@ -86,7 +87,7 @@ function searchQueryParam(req, res) {
         message: `Risultati di ricerca con parola: ${searchWord}`,
         success: true,
       };
-
+      console.log(result);
       res.json(resultData);
     },
   );
