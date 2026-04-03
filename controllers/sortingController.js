@@ -39,7 +39,7 @@ function index(req, res) {
 }
 
 // SEARCH QUERY PARAMS
-function index(req, res) {
+function searchQueryParam(req, res) {
   const searchWord = req.query.search;
   const formattedSearchWord = `%${searchWord}%`;
 
@@ -92,4 +92,4 @@ function index(req, res) {
   );
 }
 
-module.exports = { index };
+module.exports = { index, searchQueryParam };
