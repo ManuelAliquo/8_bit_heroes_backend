@@ -87,7 +87,6 @@ function searchQueryParam(req, res) {
         message: `Risultati di ricerca con parola: ${searchWord}`,
         success: true,
       };
-      console.log(result);
       res.json(resultData);
     },
   );
