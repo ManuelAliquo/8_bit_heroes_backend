@@ -18,8 +18,15 @@ function index(req, res) {
 
   let indexSQL = baseSQL;
 
-  if (field) {
-    indexSQL += ` ORDER BY ${field} ${order}`;
+  if (field==="price") {
+    indexSQL += ` ORDER BY 
+    CASE
+    WHEN discounts.percentage IS NOT NULL AND discounts.percentage > 0
+        THEN products.price - (products.price * discounts.percentage / 100)
+        ELSE products.price
+      END ${order}`;
+  } else if (field){
+indexSQL+= `ORDER BY products.${field}${order}`
   }
 
   connection.query(indexSQL, (err, result) => {
