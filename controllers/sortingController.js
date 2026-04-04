@@ -25,9 +25,11 @@ function index(req, res) {
         THEN products.price - (products.price * discounts.percentage / 100)
         ELSE products.price
       END ${order}`;
-  } else if (field){
-indexSQL+= `ORDER BY products.${field}${order}`
-  }
+  } else if (field === "name") {
+  indexSQL += ` ORDER BY products.name ${order}`
+} else if (field === "created_at") {
+  indexSQL += ` ORDER BY products.created_at ${order}`
+}
 
   connection.query(indexSQL, (err, result) => {
     if (err) {
