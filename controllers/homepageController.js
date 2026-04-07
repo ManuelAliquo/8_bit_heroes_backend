@@ -136,7 +136,7 @@ const newsletterStore = (req, res) => {
                     <div style="padding: 40px 20px;">
                         
                         <div style="margin-bottom: 30px;">
-                            <img src="public\Logo.png" alt="Logo 8 Bit Heroes" style="width: 280px; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
+                            <img src="public/Logo.png" alt="Logo 8 Bit Heroes" style="width: 280px; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
                         </div>
                         
                         <h2 style="color: #ffcc00; margin-bottom: 15px; font-size: 24px;">LEVEL UP!</h2>
