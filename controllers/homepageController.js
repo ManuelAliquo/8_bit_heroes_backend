@@ -50,8 +50,13 @@ const salesIndex = (req, res) => {
         products.name,
         products.slug,
         products.price,
-        products.sold_copies
+        products.sold_copies,
+        discounts.percentage,
+        discounts.start_date,
+        discounts.end_date
     FROM products
+    LEFT JOIN discounts
+    ON products.discount_id = discounts.id
     WHERE sold_copies IS NOT NULL
     ORDER BY RAND()
     LIMIT 4
@@ -119,8 +124,37 @@ const newsletterStore = (req, res) => {
       const mailOptions = {
         from: process.env.SMTP_USER,
         to: email,
-        subject: "Benvenuto nella Newsletter",
-        text: "Benvenuto nella Newsletter di 8 Bit Heroes",
+        subject: "Benvenuto nella Newsletter di 8 Bit Heroes! 🎮",
+        html: `
+            <div style="background-color: #1a1a1a; padding: 40px; font-family: 'Segoe UI', Arial, sans-serif; color: #ffffff; text-align: center;">
+                <div style="max-width: 600px; margin: 0 auto; background-color: #2d2d2d; border: 2px solid #ffcc00; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                    
+                    <div style="background-color: #ffcc00; padding: 15px;">
+                        <h1 style="color: #1a1a1a; margin: 0; font-size: 26px; letter-spacing: 2px; text-transform: uppercase; font-weight: 900;">8 BIT HEROES</h1>
+                    </div>
+
+                    <div style="padding: 40px 20px;">
+                        
+                        <div style="margin-bottom: 30px;">
+                            <img src="public/Logo.png" alt="Logo 8 Bit Heroes" style="width: 280px; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
+                        </div>
+                        
+                        <h2 style="color: #ffcc00; margin-bottom: 15px; font-size: 24px;">LEVEL UP!</h2>
+                        <p style="font-size: 18px; line-height: 1.6; color: #eeeeee; margin-bottom: 25px;">
+                            Grazie per esserti unito alla nostra community.<br>
+                            Da oggi sei ufficialmente un <strong>Hero</strong> del nostro mondo!
+                        </p>
+                        
+                        <a href="http://localhost:5173/" style="display: inline-block; padding: 15px 35px; background-color: #ffcc00; color: #1a1a1a; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 16px; text-transform: uppercase;">Esplora il Catalogo</a>
+                    </div>
+
+                    <div style="padding: 20px; background-color: #1f1f1f; border-top: 1px solid #3d3d3d; font-size: 12px; color: #888888;">
+                        <p style="margin: 5px 0;">Ricevi questa email perché ti sei iscritto su 8 Bit Heroes.</p>
+                        <p style="margin: 5px 0;">&copy; 2026 8 Bit Heroes Team. Tutti i diritti riservati.</p>
+                    </div>
+                </div>
+            </div>
+            `,
       };
 
       trasporter

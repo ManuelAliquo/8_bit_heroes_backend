@@ -13,8 +13,8 @@ router.get("/products/sales", homepageController.salesIndex);
 router.post("/newsletter", homepageController.newsletterStore);
 
 /* SORTING CONTROLLER */
-router.get("/products", sortingController.unsortedIndex);
-router.get("/products/sort", sortingController.sortedIndex);
+router.get("/products", sortingController.index);
+router.get("/products/find", sortingController.searchQueryParam);
 
 /* PRODUCT DETAIL CONTROLLER */
 router.get("/products/:slug", productController.show);
@@ -22,7 +22,7 @@ router.get("/products/:slug", productController.show);
 /* ORDER CONTROLLER */
 router.get("/orders", ordersController.index);
 router.get("/orders/:id", ordersMiddlewares.validId, ordersController.show);
-router.post("/orders", ordersController.store);
+router.post("/orders", ordersMiddlewares.validData, ordersController.store);
 
 /* CHECKOUT CONTROLLER */
 router.get("/checkout", checkoutController.orderProductindex);
