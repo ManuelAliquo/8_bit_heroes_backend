@@ -6,11 +6,12 @@ const productController = require("../controllers/productController");
 const ordersController = require("../controllers/ordersController");
 const ordersMiddlewares = require("../middlewares/ordersMiddlewares");
 const checkoutController = require("../controllers/checkoutController");
+const newsletterMiddleware = require("../middlewares/newsletterMiddleware")
 
 /* HOMEPAGE CONTROLLER */
 router.get("/products/discounted", homepageController.discountedIndex);
 router.get("/products/sales", homepageController.salesIndex);
-router.post("/newsletter", homepageController.newsletterStore);
+router.post("/newsletter", newsletterMiddleware.validEmail, homepageController.newsletterStore);
 
 /* SORTING CONTROLLER */
 router.get("/products", sortingController.index);
