@@ -123,6 +123,10 @@ function validData(req, res, next){
       })
   }
 
+  if (!Array.isArray(orderedProducts) || orderedProducts.length === 0) {
+    return res.status(400).json({ success: false, message: 'Carrello vuoto' });
+  }
+
   if(orderedProducts.length === 0){
     return res.status(400).json({
       errorCode: 400,

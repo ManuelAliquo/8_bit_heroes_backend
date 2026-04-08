@@ -95,28 +95,40 @@ function store(req, res) {
     billing_city,
     billing_country,
     'Pagato',
-    total_price.toFixed(2)
+    Number(total_price.toFixed(2))
     ], (err, results) => {
     if (err) return errors(err, res);
     // ritorno l'id dell'ordine creato salvandolo direttamente nella variabile orderId appositamente creata.
     orderId = results.insertId;
 
     // mappo gli orderedproducts così da salvarli nella apposita sezione del database
-    orderedProducts.map((p) => {
-      const orderedGames = `
-                INSERT INTO products_orders (order_id, product_id, quantity, product_price, digital_copy_code) 
-                VALUES (?,?,?,?,?)`;
+    const queries = orderedProducts.map(p => {
+      return new Promise((resolve, reject) => {
+        const orderedGames = `
+      INSERT INTO products_orders (order_id, product_id, quantity, product_price, digital_copy_code) 
+      VALUES (?,?,?,?,?)`;
 
-      connection.query(orderedGames, [orderId, p.id, p.quantity, p.price, p.copyInDigital ? digitalCopyCodeGenerator() : ""], (err, orderedProductsList) => {
+        connection.query(
+          orderedGames,
+          [orderId, p.id, p.quantity, p.price, p.copyInDigital ? digitalCopyCodeGenerator() : ""],
+          (err, result) => {
+            if (err) return reject(err);
+            resolve(result);
+          }
+        );
       });
-    })
-    res.json({
-      success: true,
-      message: 'Ordine inviato con successo',
-      orderCode: orderId
-    })
-  });
-}
+    });
+
+    Promise.all(queries)
+      .then(() => {
+        res.json({
+          success: true,
+          message: 'Ordine inviato con successo',
+          orderCode: orderId
+        });
+      })
+      .catch(err => errors(err, res));
+})}
 
 function errors(err, res) {
   console.log(err.message);
