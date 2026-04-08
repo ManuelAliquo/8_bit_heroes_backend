@@ -22,7 +22,7 @@ router.get("/products/:slug", productController.show);
 /* ORDER CONTROLLER */
 router.get("/orders", ordersController.index);
 router.get("/orders/:id", ordersMiddlewares.validId, ordersController.show);
-router.post("/orders", ordersController.store);
+router.post("/orders", ordersMiddlewares.validData, ordersController.store);
 
 /* CHECKOUT CONTROLLER */
 router.get("/checkout", checkoutController.orderProductindex);
