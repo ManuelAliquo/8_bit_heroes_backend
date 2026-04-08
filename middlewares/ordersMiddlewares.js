@@ -45,7 +45,7 @@ function validData(req, res, next){
         "errorCode": 400,
         "message":"Compila il campo Email"
   })}
-  if (!email.includes("@")) {
+  if (!email.includes("@") || !email.includes(".com") || !email.includes(".it") || !email.includes(".gov") || !email.includes(".net")) {
     return res.status(400).json(
       {
         "errorCode": 400,
@@ -128,6 +128,8 @@ function validData(req, res, next){
       message: "Non ci sono prodotti nel carrello"
     })
   }
+
+  next();
 
 }
 
