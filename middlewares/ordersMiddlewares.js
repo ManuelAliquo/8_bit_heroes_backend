@@ -39,13 +39,14 @@ function validData(req, res, next){
         "message":"Compilare il campo Cognome."
   })}
 
-  if (!email.trim()) {
+  if (!email || email.trim() === "") {
     return res.status(400).json(
       {
         "errorCode": 400,
         "message":"Compila il campo Email"
   })}
-  if (!email.includes("@")) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!regex.test(email.trim())) {
     return res.status(400).json(
       {
         "errorCode": 400,
@@ -129,6 +130,7 @@ function validData(req, res, next){
     })
   }
 
+  next();
 }
 
 function isValidCAP (cap) {
