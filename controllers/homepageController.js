@@ -34,7 +34,7 @@ const discountedIndex = (req, res) => {
     const responseData = {
       success: true,
       result: results,
-      messsage: "Discounted Products List:",
+      message: "Discounted Products List:",
     };
 
     res.json(responseData);
@@ -136,7 +136,7 @@ const newsletterStore = (req, res) => {
                     <div style="padding: 40px 20px;">
                         
                         <div style="margin-bottom: 30px;">
-                            <img src="public/Logo.png" alt="Logo 8 Bit Heroes" style="width: 280px; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
+                            <img src="cid:8bit_heroes_logo_email" alt="Logo 8 Bit Heroes" style="width: 280px; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
                         </div>
                         
                         <h2 style="color: #ffcc00; margin-bottom: 15px; font-size: 24px;">LEVEL UP!</h2>
@@ -149,12 +149,20 @@ const newsletterStore = (req, res) => {
                     </div>
 
                     <div style="padding: 20px; background-color: #1f1f1f; border-top: 1px solid #3d3d3d; font-size: 12px; color: #888888;">
-                        <p style="margin: 5px 0;">Ricevi questa email perché ti sei iscritto su 8 Bit Heroes.</p>
-                        <p style="margin: 5px 0;">&copy; 2026 8 Bit Heroes Team. Tutti i diritti riservati.</p>
+                        <p style="margin: 5px 0;">Ricevi questa email perché ti sei iscritto alla newsletter di 8 Bit Heroes.</p>
+                        <p style="margin: 5px 0;">Questa è una email automatica, ti chiediamo di non rispondere.</p>
+                        <p style="margin: 5px 0;">&copy; 2026 BitBros_Dev Team. Tutti i diritti riservati.</p>
                     </div>
                 </div>
             </div>
             `,
+        attachments: [
+          {
+            filename: "8bit_heroes_logo.png",
+            path: "./public/8bit_heroes_logo.png",
+            cid: "8bit_heroes_logo_email",
+          },
+        ],
       };
 
       trasporter
