@@ -167,8 +167,10 @@ const newsletterStore = (req, res) => {
 
       trasporter
         .sendMail(mailOptions)
-        .then((info) => console.log("MAIL INVIATA:", email, info.response))
-        .catch((err) => console.log("ERRORE:", err));
+        .then((info) =>
+          console.log("MAIL NEWSLETTER INVIATA:", email, info.response),
+        )
+        .catch((err) => console.log("ERRORE MAIL NEWSLETTER:", err));
 
       console.log(result.insertId);
 
