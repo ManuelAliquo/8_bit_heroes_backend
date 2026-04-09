@@ -106,8 +106,11 @@ function store(req, res) {
       // ritorno l'id dell'ordine creato salvandolo direttamente nella variabile orderId appositamente creata.
       orderId = results.insertId;
 
+      const enrichedProducts = [];
       // mappo gli orderedproducts così da salvarli nella apposita sezione del database
       const queries = orderedProducts.map((p) => {
+        const code = p.copyInDigital ? digitalCopyCodeGenerator() : "";
+        enrichedProducts.push({ ...p, digital_code: code });
         return new Promise((resolve, reject) => {
           const orderedGames = `
       INSERT INTO products_orders (order_id, product_id, quantity, product_price, digital_copy_code) 
@@ -120,7 +123,7 @@ function store(req, res) {
               p.id,
               p.quantity,
               p.price,
-              p.copyInDigital ? digitalCopyCodeGenerator() : "",
+              code,
             ],
             (err, result) => {
               if (err) return reject(err);
@@ -128,15 +131,6 @@ function store(req, res) {
             },
           );
         });
-      });
-
-      const enrichedProducts = orderedProducts.map((p) => {
-        const code = p.copyInDigital ? digitalCopyCodeGenerator() : null;
-
-        return {
-          ...p,
-          digital_code: code,
-        };
       });
 
       Promise.all(queries)
@@ -178,8 +172,8 @@ function store(req, res) {
                     <h3 style="color: #ffcc00;">Riepilogo ordine</h3>
 
                     ${enrichedProducts
-                      .map(
-                        (prod) => `
+                .map(
+                  (prod) => `
                       <div style="border-bottom: 1px solid #444; padding: 10px 0;">
                         <p style="margin: 0; font-weight: bold;">
                           ${prod.name}
@@ -193,17 +187,16 @@ function store(req, res) {
                           Prezzo: € ${prod.final_price}
                         </p>
                       
-                        ${
-                          prod.digital_code
-                            ? `<p style="margin-top:5px; font-size: 13px; color:#00ffcc;">
+                        ${prod.digital_code
+                      ? `<p style="margin-top:5px; font-size: 13px; color:#00ffcc;">
                                  🎮 Codice digitale: <strong>${prod.digital_code}</strong>
                                </p>`
-                            : ""
-                        }
+                      : ""
+                    }
                       </div>
                     `,
-                      )
-                      .join("")}
+                )
+                .join("")}
                     
                   </div>
                     
@@ -296,8 +289,8 @@ function store(req, res) {
                     <h3 style="color: #ffcc00; margin-bottom:10px;">Prodotti</h3>
                     
                     ${enrichedProducts
-                      .map(
-                        (prod) => `
+                .map(
+                  (prod) => `
                       <div style="border-bottom: 1px solid #444; padding: 10px 0;">
                         
                         <p style="margin:0; font-weight:bold;">
@@ -308,18 +301,17 @@ function store(req, res) {
                           Quantità: ${prod.quantity} • € ${prod.final_price}
                         </p>
                     
-                        ${
-                          prod.copyInDigital
-                            ? `<p style="margin:0; font-size:12px; color:#00ffcc;">
+                        ${prod.copyInDigital
+                      ? `<p style="margin:0; font-size:12px; color:#00ffcc;">
                                  🎮 Copia digitale
                                </p>`
-                            : ""
-                        }
+                      : ""
+                    }
                       
                       </div>
                     `,
-                      )
-                      .join("")}
+                )
+                .join("")}
                   </div>
                       
                   <!-- TOTALE -->
@@ -377,7 +369,7 @@ function store(req, res) {
             )
             .catch((err) => console.log("ERRORE MAIL CLIENTE:", err));
 
-          console.log(result.insertId);
+          console.log(results.insertId);
 
           res.json({
             success: true,
