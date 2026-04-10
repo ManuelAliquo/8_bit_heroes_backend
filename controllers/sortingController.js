@@ -16,7 +16,7 @@ function index(req, res) {
    FROM products
    LEFT JOIN discounts ON products.discount_id = discounts.id` ;
 
-  const allowedFields = ["price", "name", "created_at"];
+  const allowedFields = ["price", "name", "created_at", "default"];
   if (field && !allowedFields.includes(field))
     return res.status(400).json({
       success: false,
@@ -24,8 +24,8 @@ function index(req, res) {
     });
 
   let indexSQL = baseSQL;
-
-  if (field === "price") {
+  if (field === "default") { indexSQL }
+  else if (field === "price") {
     indexSQL += ` ORDER BY 
     CASE
     WHEN discounts.percentage IS NOT NULL AND discounts.percentage > 0
