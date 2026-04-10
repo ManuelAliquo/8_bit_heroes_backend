@@ -6,14 +6,15 @@ function index(req, res) {
   const field = req.query.field;
   const onlyDiscounted = req.query.onlyDiscounted;
 
-  const baseSQL = onlyDiscounted ? `SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
+  const baseSQL = onlyDiscounted === 'true' ? `SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
    FROM products
    LEFT JOIN discounts ON products.discount_id = discounts.id
    WHERE discount_id IS NOT NULL
    AND NOW() BETWEEN discounts.start_date AND discounts.end_date
-   GROUP BY products.id`: `SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
+   GROUP BY products.id`: `
+   SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
    FROM products
-   LEFT JOIN discounts ON products.discount_id = discounts.id`;
+   LEFT JOIN discounts ON products.discount_id = discounts.id` ;
 
   const allowedFields = ["price", "name", "created_at"];
   if (field && !allowedFields.includes(field))
@@ -59,7 +60,7 @@ function searchQueryParam(req, res) {
   const formattedSearchWord = `%${searchWord}%`;
   const onlyDiscounted = req.query.onlyDiscounted;
 
-  const baseSQL = onlyDiscounted ? `
+  const baseSQL = onlyDiscounted === 'true' ? `
   SELECT 
     products.id,
 	  cover_image,
@@ -81,9 +82,10 @@ function searchQueryParam(req, res) {
   INNER JOIN tags
   ON product_tags.tag_id = tags.id
 
- AND discount_id IS NOT NULL
- AND NOW() BETWEEN discounts.start_date AND discounts.end_date
- GROUP BY products.id
+  WHERE name LIKE ? OR tags.tag_name LIKE ?
+  AND discount_id IS NOT NULL
+  AND NOW() BETWEEN discounts.start_date AND discounts.end_date
+  GROUP BY products.id
   `: `
   SELECT 
     products.id,
