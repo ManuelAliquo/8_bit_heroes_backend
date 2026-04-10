@@ -4,8 +4,14 @@ const connection = require("../db/connection");
 function index(req, res) {
   const order = req.query.order === "desc" ? "DESC" : "ASC";
   const field = req.query.field;
+  const onlyDiscounted = req.query.onlyDiscounted;
 
-  const baseSQL = `SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
+  const baseSQL = onlyDiscounted ? `SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
+   FROM products
+   LEFT JOIN discounts ON products.discount_id = discounts.id
+   WHERE discount_id IS NOT NULL
+   AND NOW() BETWEEN discounts.start_date AND discounts.end_date
+   GROUP BY products.id`: `SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
    FROM products
    LEFT JOIN discounts ON products.discount_id = discounts.id`;
 
@@ -18,7 +24,7 @@ function index(req, res) {
 
   let indexSQL = baseSQL;
 
-  if (field==="price") {
+  if (field === "price") {
     indexSQL += ` ORDER BY 
     CASE
     WHEN discounts.percentage IS NOT NULL AND discounts.percentage > 0
@@ -26,10 +32,10 @@ function index(req, res) {
         ELSE products.price
       END ${order}`;
   } else if (field === "name") {
-  indexSQL += ` ORDER BY products.name ${order}`
-} else if (field === "created_at") {
-  indexSQL += ` ORDER BY products.created_at ${order}`
-}
+    indexSQL += ` ORDER BY products.name ${order}`
+  } else if (field === "created_at") {
+    indexSQL += ` ORDER BY products.created_at ${order}`
+  }
 
   connection.query(indexSQL, (err, result) => {
     if (err) {
@@ -51,8 +57,34 @@ function index(req, res) {
 function searchQueryParam(req, res) {
   const searchWord = req.query.search;
   const formattedSearchWord = `%${searchWord}%`;
+  const onlyDiscounted = req.query.onlyDiscounted;
 
-  const baseSQL = `
+  const baseSQL = onlyDiscounted ? `
+  SELECT 
+    products.id,
+	  cover_image,
+    name,
+    slug,
+    description,
+    price,
+    discounts.percentage,
+    discounts.start_date,
+    discounts.end_date
+  FROM products
+
+  LEFT JOIN discounts
+  ON discount_id = discounts.id
+
+  INNER JOIN product_tags
+  ON products.id = product_tags.product_id
+
+  INNER JOIN tags
+  ON product_tags.tag_id = tags.id
+
+ AND discount_id IS NOT NULL
+ AND NOW() BETWEEN discounts.start_date AND discounts.end_date
+ GROUP BY products.id
+  `: `
   SELECT 
     products.id,
 	  cover_image,
