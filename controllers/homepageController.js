@@ -17,7 +17,7 @@ const discountedIndex = (req, res) => {
     FROM products
     LEFT JOIN discounts
     ON discount_id = discounts.id
-    WHERE discount_id IS NOT NULL
+    WHERE discount_id IS NOT NULL AND NOW() >= discounts.start_date AND NOW() <= discounts.end_date
     ORDER BY RAND()
     LIMIT 4
   `;
