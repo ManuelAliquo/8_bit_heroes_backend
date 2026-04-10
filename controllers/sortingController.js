@@ -6,15 +6,18 @@ function index(req, res) {
   const field = req.query.field;
   const onlyDiscounted = req.query.onlyDiscounted;
 
-  const baseSQL = onlyDiscounted === 'true' ? `SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
+  const baseSQL =
+    onlyDiscounted === "true"
+      ? `SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
    FROM products
    LEFT JOIN discounts ON products.discount_id = discounts.id
    WHERE discount_id IS NOT NULL
    AND NOW() BETWEEN discounts.start_date AND discounts.end_date
-   GROUP BY products.id`: `
+   GROUP BY products.id`
+      : `
    SELECT products.*, discounts.percentage, discounts.start_date, discounts.end_date
    FROM products
-   LEFT JOIN discounts ON products.discount_id = discounts.id` ;
+   LEFT JOIN discounts ON products.discount_id = discounts.id`;
 
   const allowedFields = ["price", "name", "created_at", "default"];
   if (field && !allowedFields.includes(field))
@@ -24,8 +27,9 @@ function index(req, res) {
     });
 
   let indexSQL = baseSQL;
-  if (field === "default") { indexSQL }
-  else if (field === "price") {
+  if (field === "default") {
+    indexSQL;
+  } else if (field === "price") {
     indexSQL += ` ORDER BY 
     CASE
     WHEN discounts.percentage IS NOT NULL AND discounts.percentage > 0
@@ -33,9 +37,9 @@ function index(req, res) {
         ELSE products.price
       END ${order}`;
   } else if (field === "name") {
-    indexSQL += ` ORDER BY products.name ${order}`
+    indexSQL += ` ORDER BY products.name ${order}`;
   } else if (field === "created_at") {
-    indexSQL += ` ORDER BY products.created_at ${order}`
+    indexSQL += ` ORDER BY products.created_at ${order}`;
   }
 
   connection.query(indexSQL, (err, result) => {
@@ -59,8 +63,19 @@ function searchQueryParam(req, res) {
   const searchWord = req.query.search;
   const formattedSearchWord = `%${searchWord}%`;
   const onlyDiscounted = req.query.onlyDiscounted;
+  const order = req.query.order === "desc" ? "DESC" : "ASC";
+  const field = req.query.field;
 
-  const baseSQL = onlyDiscounted === 'true' ? `
+  const allowedFields = ["price", "name", "created_at", "default"];
+  if (field && !allowedFields.includes(field))
+    return res.status(400).json({
+      success: false,
+      result: "Invalid or missing field",
+    });
+
+  const baseSQL =
+    onlyDiscounted === "true"
+      ? `
   SELECT 
     products.id,
 	  cover_image,
@@ -86,7 +101,8 @@ function searchQueryParam(req, res) {
   AND discount_id IS NOT NULL
   AND NOW() BETWEEN discounts.start_date AND discounts.end_date
   GROUP BY products.id
-  `: `
+  `
+      : `
   SELECT 
     products.id,
 	  cover_image,
@@ -113,8 +129,23 @@ function searchQueryParam(req, res) {
   GROUP BY products.id
   `;
 
+  let indexSQL = baseSQL;
+
+  if (field === "price") {
+    indexSQL += ` ORDER BY 
+    CASE
+    WHEN discounts.percentage IS NOT NULL AND discounts.percentage > 0
+        THEN products.price - (products.price * discounts.percentage / 100)
+        ELSE products.price
+      END ${order}`;
+  } else if (field === "name") {
+    indexSQL += ` ORDER BY products.name ${order}`;
+  } else if (field === "created_at") {
+    indexSQL += ` ORDER BY products.created_at ${order}`;
+  }
+
   connection.query(
-    baseSQL,
+    indexSQL,
     [formattedSearchWord, formattedSearchWord],
     (err, result) => {
       if (err) {
