@@ -102,6 +102,8 @@ function show(req, res) {
           final_price: getFinalPrice(related),
           cover_image: related.cover_image,
           common_tags: related.common_tags,
+          start_date: related.discount_start_date,
+          end_date: related.discount_end_date,
         }));
 
         res.json(product);
