@@ -19,8 +19,7 @@ const discountedIndex = (req, res) => {
     ON discount_id = discounts.id
     WHERE discount_id IS NOT NULL AND NOW() >= discounts.start_date AND NOW() <= discounts.end_date
     ORDER BY RAND()
-    LIMIT 4
-  `;
+    LIMIT 4;`;
 
   connection.query(sql, (err, results) => {
     if (err) {
@@ -59,8 +58,7 @@ const salesIndex = (req, res) => {
     ON products.discount_id = discounts.id
     WHERE sold_copies IS NOT NULL
     ORDER BY RAND()
-    LIMIT 4
-  `;
+    LIMIT 4;`;
 
   connection.query(sql, (err, results) => {
     if (err) {
@@ -86,10 +84,8 @@ const newsletterStore = (req, res) => {
   const { email } = req.body;
 
   const checkSql = `
-    SELECT * 
-    FROM newsletter
-    WHERE email = ?
-  `;
+    SELECT * FROM newsletter
+    WHERE email = ?;`;
 
   connection.query(checkSql, [email], (err, result) => {
     if (err) {
@@ -167,9 +163,7 @@ const newsletterStore = (req, res) => {
 
       trasporter
         .sendMail(mailOptions)
-        .then((info) =>
-          console.log("MAIL NEWSLETTER INVIATA:", email, info.response),
-        )
+        .then((info) => console.log("MAIL NEWSLETTER INVIATA:", email, info.response))
         .catch((err) => console.log("ERRORE MAIL NEWSLETTER:", err));
 
       console.log(result.insertId);

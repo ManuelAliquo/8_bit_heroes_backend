@@ -4,6 +4,7 @@ const crypto = require("crypto");
 
 function index(req, res) {
   const sql = `SELECT * FROM orders`;
+
   connection.query(sql, (err, results) => {
     res.status(200).json({
       success: true,
@@ -15,18 +16,19 @@ function index(req, res) {
 function show(req, res) {
   const { id } = req.params;
   const orderId = parseInt(id);
+
   const sql = `
-    SELECT * 
-    FROM orders 
-    WHERE id = ?`;
+    SELECT * FROM orders 
+    WHERE id = ?;`;
 
   connection.query(sql, [orderId], (err, results) => {
     if (err) return errors(err, res);
 
-    const orderedProductsSql = `SELECT * FROM products_orders 
+    const orderedProductsSql = `
+        SELECT * FROM products_orders 
         INNER JOIN products 
         ON products_orders.product_id = products.id
-        WHERE order_id = ?`;
+        WHERE order_id = ?;`;
 
     connection.query(orderedProductsSql, [orderId], (err, orderedProducts) => {
       if (err) return errors(err);
@@ -40,7 +42,7 @@ function show(req, res) {
 }
 
 function store(req, res) {
-  // dati che vengono recuperati dal body della richiesta
+  // dati del body della richiesta
   const {
     name,
     surname,
@@ -53,17 +55,16 @@ function store(req, res) {
     billing_cap,
     billing_city,
     billing_country,
-    orderedProducts, //é un array di oggetti che contiene tutti i prodotti che erano nel carrello
+    orderedProducts, // array di oggetti con tutti i prodotti che erano nel carrello
   } = req.body;
 
   let total_price = 0;
 
   orderedProducts.map(
-    (prod) =>
-      (total_price = total_price + prod.final_price * parseInt(prod.quantity)),
+    (prod) => (total_price = total_price + prod.final_price * parseInt(prod.quantity)),
   );
 
-  // variabile per salvare l'id dell'ordine creato. servirà dopo per associare i prodotti nel carrello all'ordine.
+  // variabile per salvare l'id dell'ordine creato
   let orderId;
 
   const sql = `
@@ -81,8 +82,7 @@ function store(req, res) {
     billing_country,
     status, 
     total_price)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
-    `;
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);`;
 
   connection.query(
     sql,
@@ -103,7 +103,7 @@ function store(req, res) {
     ],
     (err, results) => {
       if (err) return errors(err, res);
-      // ritorno l'id dell'ordine creato salvandolo direttamente nella variabile orderId appositamente creata.
+      // ritorno l'id dell'ordine creato salvandolo direttamente nella variabile orderId
       orderId = results.insertId;
 
       const enrichedProducts = [];
@@ -118,13 +118,7 @@ function store(req, res) {
 
           connection.query(
             orderedGames,
-            [
-              orderId,
-              p.id,
-              p.quantity,
-              p.price,
-              code,
-            ],
+            [orderId, p.id, p.quantity, p.price, code],
             (err, result) => {
               if (err) return reject(err);
               resolve(result);
@@ -172,8 +166,8 @@ function store(req, res) {
                     <h3 style="color: #ffcc00;">Riepilogo ordine</h3>
 
                     ${enrichedProducts
-                .map(
-                  (prod) => `
+                      .map(
+                        (prod) => `
                       <div style="border-bottom: 1px solid #444; padding: 10px 0;">
                         <p style="margin: 0; font-weight: bold;">
                           ${prod.name}
@@ -187,16 +181,17 @@ function store(req, res) {
                           Prezzo: € ${prod.final_price}
                         </p>
                       
-                        ${prod.digital_code
-                      ? `<p style="margin-top:5px; font-size: 13px; color:#00ffcc;">
+                        ${
+                          prod.digital_code
+                            ? `<p style="margin-top:5px; font-size: 13px; color:#00ffcc;">
                                  🎮 Codice digitale: <strong>${prod.digital_code}</strong>
                                </p>`
-                      : ""
-                    }
+                            : ""
+                        }
                       </div>
                     `,
-                )
-                .join("")}
+                      )
+                      .join("")}
                     
                   </div>
                     
@@ -289,8 +284,8 @@ function store(req, res) {
                     <h3 style="color: #ffcc00; margin-bottom:10px;">Prodotti</h3>
                     
                     ${enrichedProducts
-                .map(
-                  (prod) => `
+                      .map(
+                        (prod) => `
                       <div style="border-bottom: 1px solid #444; padding: 10px 0;">
                         
                         <p style="margin:0; font-weight:bold;">
@@ -301,17 +296,18 @@ function store(req, res) {
                           Quantità: ${prod.quantity} • € ${prod.final_price}
                         </p>
                     
-                        ${prod.copyInDigital
-                      ? `<p style="margin:0; font-size:12px; color:#00ffcc;">
+                        ${
+                          prod.copyInDigital
+                            ? `<p style="margin:0; font-size:12px; color:#00ffcc;">
                                  🎮 Copia digitale
                                </p>`
-                      : ""
-                    }
+                            : ""
+                        }
                       
                       </div>
                     `,
-                )
-                .join("")}
+                      )
+                      .join("")}
                   </div>
                       
                   <!-- TOTALE -->
@@ -356,17 +352,13 @@ function store(req, res) {
           // VENDOR MAIL
           trasporter
             .sendMail(vendorMailOptions)
-            .then((info) =>
-              console.log("MAIL VENDITORE INVIATA:", email, info.response),
-            )
+            .then((info) => console.log("MAIL VENDITORE INVIATA:", email, info.response))
             .catch((err) => console.log("ERRORE MAIL VENDITORE:", err));
 
           // CUSTOMER MAIL
           trasporter
             .sendMail(mailOptions)
-            .then((info) =>
-              console.log("MAIL CLIENTE INVIATA:", email, info.response),
-            )
+            .then((info) => console.log("MAIL CLIENTE INVIATA:", email, info.response))
             .catch((err) => console.log("ERRORE MAIL CLIENTE:", err));
 
           console.log(results.insertId);
@@ -393,8 +385,7 @@ function errors(err, res) {
 // Genera il codice o token per la copia digitale del gioco
 function digitalCopyCodeGenerator(maxChar = 15) {
   // Stringa dei caratteri validi
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   // Genera un buffer di bytes casuali
   const randomBytes = crypto.randomBytes(maxChar);

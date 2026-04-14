@@ -9,16 +9,17 @@ function getFinalPrice(product) {
   if (start) start.setHours(0, 0, 0, 0);
   if (end) end.setHours(0, 0, 0, 0);
 
-  if (product.discount_percentage && start && end && today >= start && today <= end) {
+  if (product.discount_percentage && start && end && today >= start && today <= end)
     return (product.price - (product.price * product.discount_percentage) / 100).toFixed(2);
-  }
+
   return product.price;
 }
 
 function show(req, res) {
   const { slug } = req.params;
 
-  const productSql = `SELECT 
+  const productSql = `
+    SELECT 
       p.*,
       d.percentage AS discount_percentage,
       d.start_date AS discount_start_date,

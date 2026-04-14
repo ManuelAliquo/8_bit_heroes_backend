@@ -144,26 +144,22 @@ function searchQueryParam(req, res) {
     indexSQL += ` ORDER BY products.created_at ${order}`;
   }
 
-  connection.query(
-    indexSQL,
-    [formattedSearchWord, formattedSearchWord],
-    (err, result) => {
-      if (err) {
-        console.log(err.message);
-        return res.status(500).json({
-          success: false,
-          result: "query failed",
-        });
-      }
+  connection.query(indexSQL, [formattedSearchWord, formattedSearchWord], (err, result) => {
+    if (err) {
+      console.log(err.message);
+      return res.status(500).json({
+        success: false,
+        result: "query failed",
+      });
+    }
 
-      const resultData = {
-        result: result,
-        message: `Risultati di ricerca con parola: ${searchWord}`,
-        success: true,
-      };
-      res.json(resultData);
-    },
-  );
+    const resultData = {
+      result: result,
+      message: `Risultati di ricerca con parola: ${searchWord}`,
+      success: true,
+    };
+    res.json(resultData);
+  });
 }
 
 module.exports = { index, searchQueryParam };
